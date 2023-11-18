@@ -1,0 +1,38 @@
+.ant-menu-light.ant-menu-horizontal >.ant-menu-item-selected {
+    color: white !important;
+}
+
+.ant-menu-light .ant-menu-item-active {
+    color: white !important;
+}
+.flex{
+    display: flex;
+     flex-wrap: wrap;
+     color:white;
+     /* justify-content: space-between; */
+}
+.item{
+    background-color: #1677ff;
+    width: 110px;
+    display: flex;
+    flex-direction: column;
+  margin-top: 20px;
+  margin-right: 20px;
+    height: 60px;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease-in-out;
+}
+.item:hover{
+ color: black;
+ background-color:#ffff;
+}
+.disabled {
+    pointer-events: none;
+    color: black;
+    background-color: #ccc;
+}
+.calendar .ant-radio-group {
+     display:none;
+}
