@@ -22,9 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-/**
- * @author <a href="mailto:chenxilzx1@gmail.com">theonefx</a>
- */
 @Controller
 public class PathVariableController {
 

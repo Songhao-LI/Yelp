@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="54005192-9cee-4440-a352-0ae614453dc2" name="Changes" comment="" />
+    <list default="true" id="54005192-9cee-4440-a352-0ae614453dc2" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/server/springboot/src/main/java/com/server/yelp/demos/web/BasicController.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/springboot/src/main/java/com/server/yelp/demos/web/BasicController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/springboot/src/main/java/com/server/yelp/demos/web/PathVariableController.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/springboot/src/main/java/com/server/yelp/demos/web/PathVariableController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/springboot/src/main/java/com/server/yelp/demos/web/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/springboot/src/main/java/com/server/yelp/demos/web/User.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,25 +17,23 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 0
+}]]></component>
   <component name="ProjectId" id="2YVJgtDT4bdyZS7XL01EbNq08CH" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="dart.analysis.tool.window.visible" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="node.js.detected.package.eslint" value="true" />
-    <property name="node.js.detected.package.tslint" value="true" />
-    <property name="node.js.path.for.package.eslint" value="project" />
-    <property name="node.js.path.for.package.tslint" value="project" />
-    <property name="node.js.selected.package.eslint" value="(autodetect)" />
-    <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="nodejs_package_manager_path" value="npm" />
-    <property name="vue.rearranger.settings.migration" value="true" />
-  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "WebServerToolWindowFactoryState": "false",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -43,6 +45,7 @@
       <workItem from="1700604932222" duration="24000" />
       <workItem from="1701048068253" duration="64000" />
       <workItem from="1701048147311" duration="967000" />
+      <workItem from="1701897159204" duration="10000" />
     </task>
     <servers />
   </component>
@@ -59,6 +62,5 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>
