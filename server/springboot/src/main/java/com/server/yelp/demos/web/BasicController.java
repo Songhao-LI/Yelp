@@ -16,8 +16,11 @@
 
 package com.server.yelp.demos.web;
 
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -26,46 +29,33 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller
+@CrossOrigin(origins = "http://localhost:5000")
 public class BasicController {
 
     List<Object> mainData = new ArrayList<>();
-
-    // http://127.0.0.1:8080/hello?name=lisi
-    @RequestMapping("/hello")
-    @ResponseBody
-    public String hello(@RequestParam(name = "name", defaultValue = "unknown user") String name) {
-        return "Hello " + name;
-    }
+    Map<String, Map<String, Object>> storedFiles = new HashMap<>();
 
     // functions related to display
-    @GetMapping("/getlist")
+    @GetMapping("api/getList")
     @ResponseBody
-    public List<Object> getList() {
-        return mainData;
+    public Map<String, Object> getList() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("code", 0);
+        response.put("message", "ok");
+        response.put("data", mainData);
+        return response;
     }
 
-    // http://127.0.0.1:8080/user
-    @RequestMapping("/user")
-    @ResponseBody
-    public User user() {
-        User user = new User();
-        user.setName("theonefx");
-        user.setAge(666);
-        return user;
-    }
-
-    @PostMapping("/addItems")
+    @PostMapping("api/addItems")
     @ResponseBody
     public Map<String, Object> addItems(@RequestBody Map<String, Object> request) throws NoSuchAlgorithmException {
         Map<String, Object> response = new HashMap<>();
-        // 基本的参数检查
-        // ... 参数检查和处理逻辑 ...
-//        if (!request.containsKey("key1")) {
-//            String value1 = (String) myMap.get("key1");
-//            // 处理value1
-//        }
-        System.out.println("Enter function");
-        System.out.println(request.toString());
+        // check if parameter exist
+        if (request == null || request.isEmpty()) {
+            response.put("code", 1);
+            response.put("message", "parameter is None");
+            return response;
+        }
 
         // init
         Map<String, Object> child = new HashMap<>();
@@ -84,7 +74,7 @@ public class BasicController {
         if (request.containsKey("title")) {
             child.put("title", request.get("title"));
         } else {
-            response.put("status", 1);
+            response.put("code", 1);
             response.put("message", "title is necessary");
             return response;
         }
@@ -103,7 +93,7 @@ public class BasicController {
         if (request.containsKey("star")) {
             child.put("star", request.get("star"));
         } else {
-            response.put("status", 1);
+            response.put("code", 1);
             response.put("message", "star is necessary");
             return response;
         }
@@ -112,7 +102,7 @@ public class BasicController {
         if (request.containsKey("username")) {
             child.put("username", request.get("username"));
         } else {
-            response.put("status", 1);
+            response.put("code", 1);
             response.put("message", "username is necessary");
             return response;
         }
@@ -121,7 +111,7 @@ public class BasicController {
         if (request.containsKey("desc")) {
             child.put("desc", request.get("desc"));
         } else {
-            response.put("status", 1);
+            response.put("code", 1);
             response.put("message", "desc is necessary");
             return response;
         }
@@ -130,14 +120,14 @@ public class BasicController {
         if (request.containsKey("lng")) {
             child.put("lng", request.get("lng"));
         } else {
-            response.put("status", 1);
+            response.put("code", 1);
             response.put("message", "lng is necessary");
             return response;
         }
         if (request.containsKey("lat")) {
             child.put("lat", request.get("lat"));
         } else {
-            response.put("status", 1);
+            response.put("code", 1);
             response.put("message", "lat is necessary");
             return response;
         }
@@ -146,7 +136,7 @@ public class BasicController {
         if (request.containsKey("address")) {
             child.put("address", request.get("address"));
         } else {
-            response.put("status", 1);
+            response.put("code", 1);
             response.put("message", "address is necessary");
             return response;
         }
@@ -156,19 +146,76 @@ public class BasicController {
             // TODO: check type
             child.put("imgs", request.get("imgs"));
         } else {
-            response.put("status", 1);
+            response.put("code", 1);
             response.put("message", "imgs is necessary");
             return response;
         }
 
-        // 添加到列表
+        // store
         mainData.add(child);
 
-        response.put("status", 0);
+        response.put("code", 0);
         response.put("message", "ok");
         response.put("data", child);
         return response;
     }
+
+    @PostMapping("api/upload")
+    @ResponseBody
+    public Map<String, Object> upload(@RequestParam("file") MultipartFile file) throws NoSuchAlgorithmException {
+        Map<String, Object> response = new HashMap<>();
+
+        if (file.isEmpty()) {
+            response.put("code", 1);
+            response.put("message", "File is empty");
+            return response;
+        }
+
+        String fileName = file.getOriginalFilename() + System.currentTimeMillis();
+        MessageDigest digest = MessageDigest.getInstance("MD5");
+        byte[] hash = digest.digest(fileName.getBytes(StandardCharsets.UTF_8));
+        StringBuilder sb = new StringBuilder();
+        for (byte b : hash) {
+            sb.append(String.format("%02x", b));
+        }
+        String fileId = sb.toString();
+
+        Map<String, Object> fileInfo = new HashMap<>();
+        try {
+            fileInfo.put("type", file.getContentType());
+            // for small files only
+            fileInfo.put("body", file.getBytes());
+            storedFiles.put(fileId, fileInfo);
+        } catch (Exception e) {
+            response.put("code", 1);
+            response.put("message", "Error processing file");
+            return response;
+        }
+
+        response.put("code", 0);
+        response.put("message", "ok");
+        response.put("id", fileId);
+        return response;
+    }
+
+    @GetMapping("/api/getImage")
+    public ResponseEntity<?> getImage(@RequestParam String id) {
+        if (!storedFiles.containsKey(id)) {
+            return ResponseEntity.status(404).body("Picture does not exist");
+        }
+
+        Map<String, Object> imageInfo = storedFiles.get(id);
+        byte[] imageData = (byte[]) imageInfo.get("body");
+        String imageType = (String) imageInfo.get("type");
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(imageType))
+                .body(imageData);
+    }
+
+
+
+
 
     // http://127.0.0.1:8080/save_user?name=newName&age=11
     @RequestMapping("/save_user")
@@ -181,6 +228,23 @@ public class BasicController {
     @RequestMapping("/html")
     public String html(){
         return "index.html";
+    }
+
+    // http://127.0.0.1:8080/hello?name=lisi
+    @RequestMapping("/hello")
+    @ResponseBody
+    public String hello(@RequestParam(name = "name", defaultValue = "unknown user") String name) {
+        return "Hello " + name;
+    }
+
+    // http://127.0.0.1:8080/user
+    @RequestMapping("/user")
+    @ResponseBody
+    public User user() {
+        User user = new User();
+        user.setName("theonefx");
+        user.setAge(666);
+        return user;
     }
 
     @ModelAttribute
