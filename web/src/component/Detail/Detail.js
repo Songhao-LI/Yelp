@@ -168,8 +168,8 @@ const CommentButton = ({id, addEventCallback}) => {
   const handleOKModal = () => {
     // 新增
     addCommentsToCurrent({
-        'sourceID': id,
-        'user': user,
+        'sourceId': id,
+        'username': user,
         'desc': desc,
         'star': star
     })

@@ -17,7 +17,7 @@ import java.util.*;
 public class BasicController {
 
     List<Map<String, Object>> mainData = new ArrayList<>();
-    List<Object> allComments = new ArrayList<>();
+    List<Map<String, Object>> allComments = new ArrayList<>();
     Map<String, Map<String, Object>> storedFiles = new HashMap<>();
 
     // GET
@@ -56,6 +56,23 @@ public class BasicController {
         return response;
     }
 
+    @GetMapping("api/getCommentList")
+    @ResponseBody
+    public Map<String, Object> getCommentList(@RequestParam String id) {
+        Map<String, Object> response = new HashMap<>();
+        ArrayList<Map<String, Object>> comments = new ArrayList<>();
+        for (Map<String, Object> item : allComments) {
+            if (id.equals(item.get("sourceId"))) {
+                comments.add(item);
+            }
+        }
+
+        response.put("code", 0);
+        response.put("message", "ok");
+        response.put("data", comments);
+        return response;
+    }
+
     @GetMapping("/api/getImage")
     public ResponseEntity<?> getImage(@RequestParam String id) {
         if (!storedFiles.containsKey(id)) {
@@ -76,7 +93,7 @@ public class BasicController {
     @ResponseBody
     public Map<String, Object> addItems(@RequestBody Map<String, Object> request) throws NoSuchAlgorithmException {
         Map<String, Object> response = new HashMap<>();
-        // check if parameter exist
+        // CSRF protection
         if (request == null || request.isEmpty()) {
             response.put("code", 1);
             response.put("message", "parameter is None");
@@ -184,6 +201,71 @@ public class BasicController {
         response.put("data", child);
         return response;
     }
+
+    @PostMapping("api/addComment")
+    @ResponseBody
+    public Map<String, Object> addComment(@RequestBody Map<String, Object> request) throws NoSuchAlgorithmException {
+        Map<String, Object> response = new HashMap<>();
+        // CSRF protection
+        if (request == null || request.isEmpty()) {
+            response.put("code", 1);
+            response.put("message", "parameter is None");
+            return response;
+        }
+
+        // init
+        Map<String, Object> child = new HashMap<>();
+        child.put("sourceId", "");
+        child.put("username", "");
+        child.put("star", 0);
+        child.put("time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        child.put("desc", "");
+
+        // sourceId
+        if (request.containsKey("sourceId")) {
+            child.put("sourceId", request.get("sourceId"));
+        } else {
+            response.put("code", 1);
+            response.put("message", "sourceId is necessary");
+            return response;
+        }
+
+        // username
+        if (request.containsKey("username")) {
+            child.put("username", request.get("username"));
+        } else {
+            response.put("code", 1);
+            response.put("message", "username is necessary");
+            return response;
+        }
+
+        // star
+        if (request.containsKey("star")) {
+            child.put("star", request.get("star"));
+        } else {
+            response.put("code", 1);
+            response.put("message", "star is necessary");
+            return response;
+        }
+
+        // desc
+        if (request.containsKey("desc")) {
+            child.put("desc", request.get("desc"));
+        } else {
+            response.put("code", 1);
+            response.put("message", "desc is necessary");
+            return response;
+        }
+
+        // store
+        allComments.add(child);
+
+        response.put("code", 0);
+        response.put("message", "ok");
+        response.put("data", child);
+        return response;
+    }
+
 
     @PostMapping("api/upload")
     @ResponseBody
