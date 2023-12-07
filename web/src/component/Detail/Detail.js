@@ -140,7 +140,7 @@ const Comments = ({id}) => {
           <List.Item>
             <Typography>
               <Paragraph>
-                <span>username: {item.user}</span>
+                <span>username: {item.username}</span>
                 <span style={{marginLeft:'20px'}}>Rate: {item.star}</span>
                 <span style={{marginLeft:'20px'}}>Time: {item.time}</span>
               </Paragraph>
@@ -155,7 +155,7 @@ const Comments = ({id}) => {
 }
 
 const CommentButton = ({id, addEventCallback}) => {
-  const [user, setUser] = useState('')
+  const [username, setUser] = useState('')
   const [desc, setDesc] = useState('')
   const [star, setStar] = useState(0)
   const [show, setShow] = useState(false)
@@ -169,7 +169,7 @@ const CommentButton = ({id, addEventCallback}) => {
     // 新增
     addCommentsToCurrent({
         'sourceId': id,
-        'username': user,
+        'username': username,
         'desc': desc,
         'star': star
     })
@@ -206,7 +206,7 @@ const CommentButton = ({id, addEventCallback}) => {
       <Modal title='Reply' open={show} onOk={handleOKModal} onCancel={handleCancelModal}>
         <Row>
           <Col span={6}>username:</Col>
-          <Col span={13}><Input size='small' value={user} onChange={e => {
+          <Col span={13}><Input size='small' value={username} onChange={e => {
             e.persist()
             setUser(e.target.value)
           }}></Input></Col>
