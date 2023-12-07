@@ -16,10 +16,11 @@ import java.util.*;
 @CrossOrigin(origins = "http://localhost:5000")
 public class BasicController {
 
-    List<Object> mainData = new ArrayList<>();
+    List<Map<String, Object>> mainData = new ArrayList<>();
+    List<Object> allComments = new ArrayList<>();
     Map<String, Map<String, Object>> storedFiles = new HashMap<>();
 
-    // functions related to display
+    // GET
     @GetMapping("api/getList")
     @ResponseBody
     public Map<String, Object> getList() {
@@ -30,7 +31,48 @@ public class BasicController {
         return response;
     }
 
-    @PostMapping("api/addItems")
+    @GetMapping("api/getDetails")
+    @ResponseBody
+    public Map<String, Object> getDetails(@RequestParam String id) {
+        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> matchingData = null;
+        for (Map<String, Object> item : mainData) {
+            if (id.equals(item.get("id"))) {
+                matchingData = item;
+                break;
+            }
+        }
+
+        if (matchingData == null) {
+            response.put("code", 1);
+            response.put("message", "not found");
+            response.put("data", null);
+            return response;
+        }
+
+        response.put("code", 0);
+        response.put("message", "ok");
+        response.put("data", matchingData);
+        return response;
+    }
+
+    @GetMapping("/api/getImage")
+    public ResponseEntity<?> getImage(@RequestParam String id) {
+        if (!storedFiles.containsKey(id)) {
+            return ResponseEntity.status(404).body("Picture does not exist");
+        }
+
+        Map<String, Object> imageInfo = storedFiles.get(id);
+        byte[] imageData = (byte[]) imageInfo.get("body");
+        String imageType = (String) imageInfo.get("type");
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(imageType))
+                .body(imageData);
+    }
+
+    // POST
+    @PostMapping("api/addToList")
     @ResponseBody
     public Map<String, Object> addItems(@RequestBody Map<String, Object> request) throws NoSuchAlgorithmException {
         Map<String, Object> response = new HashMap<>();
@@ -127,7 +169,6 @@ public class BasicController {
 
         // images
         if (request.containsKey("imgs")) {
-            // TODO: check type
             child.put("imgs", request.get("imgs"));
         } else {
             response.put("code", 1);
@@ -178,26 +219,11 @@ public class BasicController {
 
         response.put("code", 0);
         response.put("message", "ok");
-        response.put("id", fileId);
+        Map<String, String> returnData = new HashMap<>();
+        returnData.put("id", fileId);
+        response.put("data", returnData);
         return response;
     }
-
-    @GetMapping("/api/getImage")
-    public ResponseEntity<?> getImage(@RequestParam String id) {
-        if (!storedFiles.containsKey(id)) {
-            return ResponseEntity.status(404).body("Picture does not exist");
-        }
-
-        Map<String, Object> imageInfo = storedFiles.get(id);
-        byte[] imageData = (byte[]) imageInfo.get("body");
-        String imageType = (String) imageInfo.get("type");
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(imageType))
-                .body(imageData);
-    }
-
-
 
 
 

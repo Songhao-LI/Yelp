@@ -47,7 +47,7 @@ const HeadButton = ({newEventCallback}) => {
   }
 
   const submit = (param) => {
-    axios.post('api/addItems', param, {
+    axios.post('api/addToList', param, {
       headers: {
         "Content-Type": "application/json"
       }
@@ -101,6 +101,7 @@ const HeadButton = ({newEventCallback}) => {
   // 控制最大数量
   const uploadToListHandler = ({file, fileList, event}) => {
     setUploads(fileList)
+    console.log(fileList)
     if (file.status === 'uploading') {
       message.success('uploading, please wait')
       setUploads(fileList)

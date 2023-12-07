@@ -33,7 +33,7 @@ const Detail = ({windowHeight}) => {
   }, [])
 
   const getDetailInfo = (id) => {
-    axios.get('/api/getDetail', {params: {id: id}}).then((res) => {
+    axios.get('/api/getDetails', {params: {id: id}}).then((res) => {
       if (res.data.code !== 0) {
         message.error(res.data.message)
         return
