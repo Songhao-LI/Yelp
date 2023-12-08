@@ -57,7 +57,7 @@ const Detail = ({windowHeight}) => {
           <Divider style={{color: 'grey'}} plain>Images</Divider>
           <Imgs imgData={detailInfo.imgs}></Imgs>
           <Divider style={{color: 'grey'}} plain>Address</Divider>
-          <Map coordinate={{lat:detailInfo.lat, lng:detailInfo.lng}} zoom={6}></Map>
+          <Map coordinate={{lat:detailInfo.lat, lng:detailInfo.lng}} zoom={20}></Map>
         </Col>
         <Col span={2}></Col>
       </Row>
