@@ -149,7 +149,7 @@ const Comments = ({id}) => {
           </List.Item>
         )}>
       </List>
-      <Reservation ref={drawer}></Reservation>
+      <Reservation ref={drawer} id={id}></Reservation>
     </div>
   )
 }

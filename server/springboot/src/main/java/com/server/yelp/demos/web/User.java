@@ -16,6 +16,8 @@
 
 package com.server.yelp.demos.web;
 
+import lombok.Data;
+
 public class User {
 
     private String name;

@@ -1,10 +1,18 @@
 package com.server.yelp.demos.web;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.server.yelp.demos.dto.MangoDocDto;
+import com.server.yelp.demos.dto.OrderDto;
+import com.server.yelp.demos.dto.OrderItemDto;
+import com.server.yelp.demos.dto.OrderReqDto;
+import com.server.yelp.demos.service.OrderService;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -29,7 +37,6 @@ public class BasicController {
         response.put("data", mainData);
         return response;
     }
-
     @PostMapping("api/addItems")
     @ResponseBody
     public Map<String, Object> addItems(@RequestBody Map<String, Object> request) throws NoSuchAlgorithmException {
@@ -236,5 +243,92 @@ public class BasicController {
             , @RequestParam(name = "age", defaultValue = "12") Integer age, User user) {
         user.setName("zhangsan");
         user.setAge(18);
+    }
+    
+    @Deprecated
+    @Autowired
+    MongoTemplate mongoTemplate;
+
+    @RequestMapping("/test/saveMg")
+    @ResponseBody
+    @Deprecated
+    public String testSave(){
+    	
+    	
+    	MangoDocDto doc = new MangoDocDto();
+    	doc.setAddress("北京");
+    	doc.setComments(1);
+    	doc.setStar(10);
+    	doc.setLng(1);
+    	doc.setId("ab9990990");
+    	doc.setTime(new Date());
+    	doc.setTitle("测试数据");
+    	List<OrderDto> order = new ArrayList();
+    	OrderDto od = new OrderDto();
+    	od.setDay("2023-12-10");
+
+    	List<OrderItemDto> orders = new ArrayList(1);
+    	OrderItemDto it = new OrderItemDto();
+    	it.setPeopleNumber("10");
+    	it.setTime("2023-12-10");
+    	it.setValue("vt");
+    	orders.add(it);
+    	
+    	 
+    	od.setOrders(orders);;
+    	order.add(od);
+		doc.setOrder(order );
+    	
+		
+		mongoTemplate.insert(doc,"dataList");
+    	
+    	
+    	
+    	
+    	
+    	return "success";
+    }
+
+    @RequestMapping("/api/findById/{id}")
+    @ResponseBody
+    public MangoDocDto findById(@PathVariable(name="id")  String id){
+    	//return mongoTemplate.findById("ab9990990", MangoDocDto.class,"dataList");
+    	return orderService.findById(id);
+    }
+    
+    @Autowired
+    OrderService orderService;
+    
+    @RequestMapping("/test/updateMg")
+    @ResponseBody
+    @Deprecated
+    public MangoDocDto testUpdateMg(){
+    	OrderReqDto t = new OrderReqDto();
+    	t.setDay("2023-12-10");
+    	t.setId("ab9990960");
+    	OrderItemDto it = new OrderItemDto();
+    	it.setPeopleNumber("10");
+    	it.setTime("2023-12-09");
+    	it.setValue("va");  //   day = 2023-12-10  数据已经在 表中存在 ， value = va 数据不存在，测试 
+		t.setItemDto(it );
+		
+		orderService.update(t);
+		
+		return this.findById(t.getId());
+    	
+    }
+    
+    @RequestMapping("/api/updateMg")
+    @ResponseBody
+    public String updateMg(@RequestBody OrderReqDto reqDto ){
+    	return orderService.update(reqDto);
+    }
+    //复制放到这下，重新服务
+    @RequestMapping("/api/findByIdAndDay/{id}")
+    @ResponseBody
+    public List<OrderItemDto> findByIdAndDay(@PathVariable(name="id")  String id ){
+        OrderReqDto t = new OrderReqDto();
+        t.setId(id);
+        return orderService.findByIdAndDay(t);
     }
 }
