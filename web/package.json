@@ -19,11 +19,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-<<<<<<< HEAD
     "start": "set PORT=5000 && react-scripts start",
-=======
-    "start": "BROWSER=none PORT=5000 react-scripts start",
->>>>>>> 20a3952f16615955095c0caef50e42a1a10b9ec0
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

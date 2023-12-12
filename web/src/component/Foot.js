@@ -6,7 +6,7 @@ const Foot = () => {
       <Footer style = {{
         textAlign: 'center'
       }}>
-        Yelp @2023 Created by Songhao Li
+        YelpPark @2023 Created by Songhao Li
       </Footer>
   )
 }

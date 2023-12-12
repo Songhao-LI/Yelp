@@ -20,7 +20,7 @@ const HeadButton = ({newEventCallback}) => {
   const [address, setAddress] = useState('')
   const [desc, setDesc] = useState('')
   const [star, setStar] = useState(0)
-  const [coordinate, setCoordinate] = useState({lat: 40.729675, lng: -73.996925})
+  const [coordinate, setCoordinate] = useState({lat: 0, lng: 0})
   const handleMapClick = (lat, lng) => {
     setCoordinate({lat: lat, lng: lng})
   }
@@ -41,13 +41,13 @@ const HeadButton = ({newEventCallback}) => {
     setTitle('')
     setAddress('')
     setStar(0)
-    setCoordinate({lat: 40.729675, lng: -73.996925})
+    setCoordinate({lat: 0, lng: 0})
     setShow(true)
     setUploads([])
   }
 
   const submit = (param) => {
-    axios.post('api/addToList', param, {
+    axios.post('api/addItems', param, {
       headers: {
         "Content-Type": "application/json"
       }
@@ -101,7 +101,6 @@ const HeadButton = ({newEventCallback}) => {
   // 控制最大数量
   const uploadToListHandler = ({file, fileList, event}) => {
     setUploads(fileList)
-    console.log(fileList)
     if (file.status === 'uploading') {
       message.success('uploading, please wait')
       setUploads(fileList)
@@ -165,7 +164,7 @@ const HeadButton = ({newEventCallback}) => {
         </Col></Row>
 
         <Row><Col span={5}>position info:</Col></Row>
-        <Row><Col span={24}><Map coordinate={{lat: coordinate.lat, lng: coordinate.lng}} zoom={20} onClick={handleMapClick} movable={true}></Map></Col></Row>
+        <Row><Col span={24}><Map coordinate={{lat: coordinate.lat, lng: coordinate.lng}} zoom={6} onClick={handleMapClick} movable={true}></Map></Col></Row>
 
         <Row><Col span={5}>pictures:</Col></Row>
         <Row><Col span={24}>

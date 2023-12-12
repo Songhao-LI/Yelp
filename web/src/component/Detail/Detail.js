@@ -33,7 +33,7 @@ const Detail = ({windowHeight}) => {
   }, [])
 
   const getDetailInfo = (id) => {
-    axios.get('/api/getDetails', {params: {id: id}}).then((res) => {
+    axios.get('/api/getDetail', {params: {id: id}}).then((res) => {
       if (res.data.code !== 0) {
         message.error(res.data.message)
         return
@@ -57,7 +57,7 @@ const Detail = ({windowHeight}) => {
           <Divider style={{color: 'grey'}} plain>Images</Divider>
           <Imgs imgData={detailInfo.imgs}></Imgs>
           <Divider style={{color: 'grey'}} plain>Address</Divider>
-          <Map coordinate={{lat:detailInfo.lat, lng:detailInfo.lng}} zoom={20}></Map>
+          <Map coordinate={{lat:detailInfo.lat, lng:detailInfo.lng}} zoom={6}></Map>
         </Col>
         <Col span={2}></Col>
       </Row>
@@ -140,7 +140,7 @@ const Comments = ({id}) => {
           <List.Item>
             <Typography>
               <Paragraph>
-                <span>username: {item.username}</span>
+                <span>username: {item.user}</span>
                 <span style={{marginLeft:'20px'}}>Rate: {item.star}</span>
                 <span style={{marginLeft:'20px'}}>Time: {item.time}</span>
               </Paragraph>
@@ -155,7 +155,7 @@ const Comments = ({id}) => {
 }
 
 const CommentButton = ({id, addEventCallback}) => {
-  const [username, setUser] = useState('')
+  const [user, setUser] = useState('')
   const [desc, setDesc] = useState('')
   const [star, setStar] = useState(0)
   const [show, setShow] = useState(false)
@@ -168,8 +168,8 @@ const CommentButton = ({id, addEventCallback}) => {
   const handleOKModal = () => {
     // 新增
     addCommentsToCurrent({
-        'sourceId': id,
-        'username': username,
+        'sourceID': id,
+        'user': user,
         'desc': desc,
         'star': star
     })
@@ -206,7 +206,7 @@ const CommentButton = ({id, addEventCallback}) => {
       <Modal title='Reply' open={show} onOk={handleOKModal} onCancel={handleCancelModal}>
         <Row>
           <Col span={6}>username:</Col>
-          <Col span={13}><Input size='small' value={username} onChange={e => {
+          <Col span={13}><Input size='small' value={user} onChange={e => {
             e.persist()
             setUser(e.target.value)
           }}></Input></Col>
