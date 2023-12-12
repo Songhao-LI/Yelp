@@ -1,16 +1,32 @@
-import React,{useEffect,useState,forwardRef,useImperativeHandle} from "react";
+/*
+ * @Author: Ren Bing
+ * @Date: 2023-11-14 16:02:09
+ * @LastEditors: Ren Bing
+ * @LastEditTime: 2023-11-15 20:33:07
+ * @Description: 请填写简�?
+ */
+
+import React,{useEffect,useMemo,useState,forwardRef,useImperativeHandle} from "react";
 import { useNavigate } from "react-router-dom";
 import dayjs from 'dayjs';
-import { Alert, Calendar,FloatButton,Button,Modal,Drawer,Form,message, InputNumber,Input  } from 'antd';
+import { Alert, Calendar,FloatButton,Button,Modal,Drawer,Form,message, InputNumber,Input,Spin  } from 'antd';
 import {  ArrowLeftOutlined  } from '@ant-design/icons';
+import axios from "axios";
+import { debounce } from 'lodash';
 const Reservation = (props,ref) => {
     const navigate = useNavigate();
     const [value, setValue] = useState(() => dayjs());
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [item1, setItem] = useState({});
+    const [TimeValue, setTimeValue] = useState(timeSlot(30));
+    const [List, setList] = useState({});
+    const [data, setData] = useState([]);
     const [selectedValue, setSelectedValue] = useState(() => dayjs());
     const onSelect = (newValue) => {
       setValue(newValue);
       setSelectedValue(newValue);
+      getData(dayjs(newValue).format('YYYY-MM-DD'))
     };
     const onPanelChange = (newValue) => {
       setValue(newValue);
@@ -26,24 +42,40 @@ const Reservation = (props,ref) => {
     const initDay=()=>{
       setValue(dayjs())
     }
-    // console.log(props,55,navigate,value)
     useEffect(()=>{
+      change()
+     
         return ()=>{
          
         }
-    },[])
-    function timeSlot (step) {   //  step = 间隔的分钟
+    },[List,item1])
+
+      const change=()=>{
+        const data=[...timeSlot(30)]
+  
+        for(let i=0;i<List?.length;i++){
+          const item = data.findIndex(item=>item.value===List[i]?.value)
+          if(item>=0){
+                  data[item].type='Booked'
+                 }
+
+        }
+       
+        setData(data)
+        
+      }
+    function timeSlot (step) {   //  step = 间隔的分�?
       var date = new Date()
       const a='00'*1
-       date.setHours(a)    // 时分秒设置从零点开始
+       date.setHours(a)    // 时分秒设置从零点�?�?
        date.setSeconds(a)
       date.setUTCMinutes(a)
      
       var arr = [], timeArr = [];
-      var slotNum = 24*60/step   // 算出多少个间隔
+      var slotNum = 24*60/step   // 算出多少个间�?
       for (var f = 0; f < slotNum; f++) {   //  stepM * f = 24H*60M
           // arr.push(new Date(Number(date.getTime()) + Number(step*60*1000*f)))   //  标准时间数组
-          var time = new Date(Number(date.getTime()) + Number(step*60*1000*f))  // 获取：零点的时间 + 每次递增的时间
+          var time = new Date(Number(date.getTime()) + Number(step*60*1000*f))  // 获取：零点的时间 + 每次递增的时�?
           var hour = '', sec = '';
           time.getHours() < 10 ? hour = '0' + time.getHours() : hour = time.getHours()  // 获取小时
           time.getMinutes() < 10 ? sec = '0' + time.getMinutes() : sec = time.getMinutes() 
@@ -53,11 +85,12 @@ const Reservation = (props,ref) => {
           const _item={
             key:index,
             value:item,
+            id:Math.random()
             // ...
          }
           if(item.split(':')[0]<12){
             _item.value=item+'am'
-            // _item.type='已预定'
+            // _item.type='已预�?'
           }else{
             _item.value=item+'pm'
           }
@@ -65,24 +98,72 @@ const Reservation = (props,ref) => {
         })
       return mapArr
   }
-  const [TimeValue, setTimeValue] = useState(timeSlot(30))
-  const showModal = () => {
+ 
+  const showModal = (item,index) => {
+    
     setIsModalOpen(true);
-   
+    setItem(item)
+  
   };
    //getData ...todo
-  const getData=()=>{
+  const getData= async(day)=>{
+    const obj={
+      id:'ab99909977',
+      // 到时值换为props.id
+    }
+    setLoading(true)
+  const {status,data}= await axios.post('/api/findById/'+obj.id+`?i=${new Date().getTime()}`)
+    if(status===200){
+     
+      const listData=data?.order??[]
+    
+      const item=listData.find(item=>item.day===day)??null
+       setList(item?.orders??[])
+    }
+    setLoading(false)
 
   }
   const handleOk = () => {
     
     form.validateFields({ validateOnly: true }).then(
-      () => {
-        //savaData
-        //...todo
+     async () => {
+        
+        const v=item1.value
+        const f=form.getFieldsValue()?.PeopleNumber
+        const da={
+          // id:props?.id,
+          id:'ab99909977',
+          day:dayjs(value).format('YYYY-MM-DD'),
+          itemDto:{
+            time:dayjs().format('YYYY-MM-DD HH:mm:ss'),
+            value:v,
+            peopleNumber:String(f),
+            
+          }
+        }
+     
+        axios.post('/api/updateMg',da , {
+          header: {
+            'Content-type': 'application/json'
+          }}).then(async(res)=>{
+           if(res.data==='抱歉，你预定晚了'){
+            message.warning('Sorry, you made a late reservation')
+           }else{
+            message.success('Appointment successful')
+           }
+        
+           item1.type='Booked'
+           const _data=[...data].map(i=>{
+            if(i.key===item1.key){
+              i.type=item1.type
+            }
+            return i
+           })
+          setData(_data)
+          getData(dayjs(value).format('YYYY-MM-DD'))
+          })
         setIsModalOpen(false);
         form.resetFields()
-        // console.log(form.getFieldsValue())
       },
       () => {
         message.error('Submit failed!');
@@ -94,9 +175,11 @@ const Reservation = (props,ref) => {
   };
   const [open, setOpen] = useState(false);
 
-  const showDrawer = () => {
+  const showDrawer =async () => {
     setOpen(true);
-    getData()
+   
+   await getData(dayjs(value).format('YYYY-MM-DD'))
+  //  change()
   };
 
   const onClose = () => {
@@ -116,15 +199,16 @@ const Reservation = (props,ref) => {
   return (
       <div style={{
       height: props.windowHeight,
-      // // overflowY: 'auto',
-      // padding:'20px',
+    
       }
       }
       ref={ref}
       className="calendar"
       >
       <Button type="primary" style={{marginTop:'20px'}} onClick={showDrawer}>Reservation</Button>
+   
     <Drawer mask={false} title="Reservation" placement="right" onClose={onClose} open={open} width='40%' style={{paddingBottom:'50px'}}>
+ 
        <Alert message={`You selected date: ${selectedValue?.format('YYYY-MM-DD')}`} />
        <FloatButton icon={< ArrowLeftOutlined  />}      tooltip={<div>Select the current time and date</div>} onClick={initDay}/>
       <Calendar value={value} onSelect={onSelect} onPanelChange={onPanelChange}   disabledDate={disabledDate} cellRender={cellRender}
@@ -134,15 +218,17 @@ const Reservation = (props,ref) => {
       <div style={{height:200,
       marginTop:40}} className="flex">
       {
-        TimeValue.map((item,index)=>{
-          return (<div c className={item.type? 'disabled item':'item'} onClick={ showModal} key={item.value}>
+        data.map((item,index)=>{
+          return (<div c className={item.type? 'disabled item':'item'} onClick={ ()=>showModal(item,index)} key={item.value}>
 
               <p style={{fontSize:'16px'}}>  {item.value}</p>
               <h3>{item.type??''}</h3>
           </div>)
       })
+
     }
     </div>
+
     <Modal mask={false} title="Reservation" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} >
     <Form
     form={form}
