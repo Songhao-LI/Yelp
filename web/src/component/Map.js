@@ -3,8 +3,10 @@ import {useEffect, useState} from "react";
 
 const Map = ({coordinate, zoom, onClick = undefined, movable = false, }) => {
   const [key] = useState('AIzaSyDYIrGLUEv16eg26n7CtL9tipYAkefiSiM')
-  const [coordinateInput, setCoordinate] = useState({lat:0, lng:0})
+  const [coordinateInput, setCoordinate] = useState({lat:coordinate.lat, lng:coordinate.lng})
   const [inZoom, setZoom] = useState(zoom)
+
+  console.log(coordinate)
 
   useEffect(() => {
     setCoordinate(coordinate)

@@ -39,9 +39,6 @@ public class BasicController {
         return response;
     }
 
-    @PostMapping("api/addItems")
-
-
     @GetMapping("api/getDetails")
     @ResponseBody
     public Map<String, Object> getDetails(@RequestParam String id) {
@@ -101,7 +98,6 @@ public class BasicController {
 
     // POST
     @PostMapping("api/addToList")
-
     @ResponseBody
     public Map<String, Object> addItems(@RequestBody Map<String, Object> request) throws NoSuchAlgorithmException {
         Map<String, Object> response = new HashMap<>();
@@ -318,6 +314,8 @@ public class BasicController {
         response.put("data", returnData);
         return response;
     }
+
+
 
 
 
